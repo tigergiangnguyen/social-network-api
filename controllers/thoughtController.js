@@ -1,5 +1,4 @@
-const { Thought, User, Reaction } = require('../models');
-const { Types } = require('mongoose');
+const { Thought } = require('../models');
 
 const getAllThoughts = async (req, res) => {
     try {
@@ -11,10 +10,8 @@ const getAllThoughts = async (req, res) => {
 };
 
 const getSingleThought = async (req, res) => {
-    const thoughtId = req.params.id;
-
     try {
-      const thought = await Thought.findById(thoughtId);
+      const thought = await Thought.findOne({_id: req.params.thoughtId});
       if (!thought) {
         return res.status(404).json({ error: 'Thought not found' });
       }
@@ -40,27 +37,23 @@ const createThought = async (req, res) => {
     }
 };
 
-const updateThought = async (req, res) => {
-    const thoughtId = req.params.id; 
-    const { thoughtText } = req.body;
-  
-    try {
-      const thought = await Thought.findByIdAndUpdate(thoughtId);
-      if (!thought) {
-        return res.status(404).json({ error: 'Thought not found' });
-      }
-      thought.thoughtText = thoughtText;
-      const updatedThought = await thought.save();
-      res.json(updatedThought);
-    } catch (error) {
-      res.status(500).json(error);
+const updateThought = async (req, res) => { 
+  try {
+    const thought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, {new: true});
+    if (!thought) {
+      res.status(404).json({ message: 'Thought not found' });
+    } else {
+      res.json(thought);
     }
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
 
 const deleteThought = async (req, res) => {
-    const thoughtId = req.params.id;
+    const thoughtId = {_id:req.params.thoughtId};
     try {
-      const thought = await Thought.findByIdAndRemove(thoughtId);
+      const thought = await Thought.findByIdAndDelete(thoughtId);
       if (!thought) {
         return res.status(404).json({ error: 'Thought not found' });
       }

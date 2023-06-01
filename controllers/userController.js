@@ -1,4 +1,4 @@
-const { User } = require('../models/User');
+const { User } = require('../models');
 
 const getAllUsers = async (req, res) => {
     try {
@@ -6,11 +6,12 @@ const getAllUsers = async (req, res) => {
       res.json(users);
     } catch (error) {
       res.status(500).json(error);
+      console.log(error);
     }
 };
 
 const getSingleUser = async (req, res) => {
-    const userId = req.params.id;
+    const userId = req.params.userId
   
     try {
       const user = await User.findById(userId);
@@ -23,16 +24,13 @@ const getSingleUser = async (req, res) => {
     }
 };
 
-const createUser = async (req, res) => {
-    const { username, email } = req.body;
-  
+const createUser = async (req, res) => { 
     try {
-      const newUser = new User({
-        username,
-        email
-      });
-      const savedUser = await newUser.save();
-      res.status(201).json(savedUser);
+      const newUser = User.create(req.body);
+      if (newUser) {
+        res.json({ message: 'Successfully created user' });
+      }
+      res.json(newUser);
     } catch (error) {
       res.status(500).json(error);
     }
@@ -68,42 +66,40 @@ const deleteUser = async (req, res) => {
 };
 
 const addFriend = async (req, res) => {
-    const userId = req.params.id;
-    const friendId = req.body.friendId;
-  
     try {
-      const user = await User.findOneAndUpdate(userId);
+      const user = await User.findOneAndUpdate(
+        { _id: req.params.userId },
+        { $addToSet: { friends: req.body.friendId || req.params.friendId} },
+        { new: true }
+      );
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      user.friends.push(friendId);
-      const updatedUser = await user.save();
-      res.json(updatedUser);
+      res.json(user);
     } catch (error) {
       res.status(500).json(error);
     }
 };
 
-const removeFriend = async (req, res) => {
-    const userId = req.params.id;
-    const friendId = req.params.friendId;
-  
+const removeFriend = async ({ params }, res) => {
     try {
-      const user = await User.findOneAndUpdate(userId);
+      const user = await User.findOneAndUpdate(
+        { _id: params.userId },
+        { $pull: { friends: params.friendId } },
+        { new: true }
+      );
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
-      const friendIndex = user.friends.includes(friendId);
+      const friendIndex = !user.friends.includes(params.friendId);
   
-      if (friendIndex === -1) {
-        return res.status(404).json(error);
+      if (friendIndex) {
+        res.json({ message: "Successfully removed friend", user})
+      } else { 
+      res.json(user);
       }
-      user.friends.splice(friendIndex, 1);
-      const updatedUser = await user.save();
-  
-      res.json(updatedUser);
     } catch (error) {
-      res.status(500).json(error);
+      res.status(400).json(error);
     }
 };
 
