@@ -29,10 +29,7 @@ const getSingleUser = async (req, res) => {
 // Create new user
 const createUser = async (req, res) => { 
     try {
-      const newUser = User.create(req.body);
-      if (newUser) {
-        res.json({ message: 'Successfully created user' });
-      }
+      const newUser = await User.create(req.body);
       res.json(newUser);
     } catch (error) {
       res.status(500).json(error);
