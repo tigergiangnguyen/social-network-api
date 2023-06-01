@@ -1,5 +1,6 @@
 const { User } = require('../models');
 
+// Get all users
 const getAllUsers = async (req, res) => {
     try {
       const users = await User.find();
@@ -10,6 +11,7 @@ const getAllUsers = async (req, res) => {
     }
 };
 
+// Get user by id
 const getSingleUser = async (req, res) => {
     const userId = req.params.userId
   
@@ -24,6 +26,7 @@ const getSingleUser = async (req, res) => {
     }
 };
 
+// Create new user
 const createUser = async (req, res) => { 
     try {
       const newUser = User.create(req.body);
@@ -36,6 +39,7 @@ const createUser = async (req, res) => {
     }
 };
 
+// Update user
 const updateUser = async (req, res) => {
     const userId = req.params.id;
     const updates = req.body;
@@ -51,6 +55,7 @@ const updateUser = async (req, res) => {
     }
 };
 
+// Delete user by id
 const deleteUser = async (req, res) => {
     const userId = req.params.id;
   
@@ -65,6 +70,7 @@ const deleteUser = async (req, res) => {
     }
 };
 
+// Add friend by id to user
 const addFriend = async (req, res) => {
     try {
       const user = await User.findOneAndUpdate(
@@ -81,6 +87,7 @@ const addFriend = async (req, res) => {
     }
 };
 
+// Remove friend from user by id
 const removeFriend = async ({ params }, res) => {
     try {
       const user = await User.findOneAndUpdate(

@@ -1,5 +1,6 @@
 const { Thought } = require('../models');
 
+// Get all thoughts
 const getAllThoughts = async (req, res) => {
     try {
       const thoughts = await Thought.find();
@@ -9,6 +10,7 @@ const getAllThoughts = async (req, res) => {
     }
 };
 
+// Get thought by id
 const getSingleThought = async (req, res) => {
     try {
       const thought = await Thought.findOne({_id: req.params.thoughtId});
@@ -21,6 +23,7 @@ const getSingleThought = async (req, res) => {
     }
 };
 
+// Create new thought
 const createThought = async (req, res) => {
     const { thoughtText, username, userId } = req.body;
   
@@ -37,6 +40,7 @@ const createThought = async (req, res) => {
     }
 };
 
+// Update thought
 const updateThought = async (req, res) => { 
   try {
     const thought = await Thought.findByIdAndUpdate(req.params.thoughtId, req.body, {new: true});
@@ -50,6 +54,7 @@ const updateThought = async (req, res) => {
   }
 };
 
+// Delete thought by id
 const deleteThought = async (req, res) => {
     const thoughtId = {_id:req.params.thoughtId};
     try {
@@ -63,6 +68,7 @@ const deleteThought = async (req, res) => {
     }
 };
 
+// Create new reaction for thought
 const createReaction = async (req, res) => {
     try {
       const thought = await Thought.findOneAndUpdate(
@@ -76,6 +82,7 @@ const createReaction = async (req, res) => {
     }
 };
 
+// Delete reaction from thought by id
 const deleteReaction = async (req, res) => {
     try {
       const thought = await Thought.findOneAndUpdate(

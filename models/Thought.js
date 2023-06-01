@@ -1,6 +1,8 @@
-const { Schema, model } = require('mongoose'); 
+// Import mongoose library
+const { Schema, model } = require('mongoose');
 const reactionSchema = require('./Reaction');
 
+// Defining fields for schema
 const thoughtSchema = new Schema (
     {
         thoughtText: {
